@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MathCraft RPG – Save the Princess</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- MAIN MENU -->
+  <div id="menu" class="screen">
+    <h1>🪓 MathCraft RPG</h1>
+    <p class="subtitle">A math-hero must rescue the Princess – solve math problems across 3 levels!</p>
+    <div class="menu-buttons">
+      <button id="btn-start">▶ Start Quest</button>
+      <button id="btn-load">💾 Load</button>
+      <button id="btn-credits">📜 Credits</button>
+    </div>
+    <small class="hint">Tip: Press Enter to submit your answer in-game.</small>
+    <div style="margin-top:12px;">
+      <button id="shareBtn">🔗 Share / QR</button>
+    </div>
+  </div>
+
+  <!-- CREDITS -->
+  <div id="credits" class="screen hidden">
+    <h2>Credits</h2>
+    <p>Created for InnoMaths Competition 2024. 3-Level Math Adventure.</p>
+    <button class="btn-back">⬅ Back</button>
+  </div>
+
+  <!-- STORY (typewriter) -->
+  <div id="story" class="screen hidden">
+    <h2>📖 The Math Quest</h2>
+    <div id="storyBox" class="story-box">
+      <div id="storyText"></div>
+    </div>
+    <div class="menu-buttons">
+      <button id="btn-begin">⚔️ Begin Quest</button>
+      <button class="btn-back">⬅ Back</button>
+    </div>
+  </div>
+
+  <!-- SHARE / QR PANEL -->
+  <div id="sharePanel" class="modal hidden">
+    <div class="modal-card">
+      <h1>🔗 Share your game</h1>
+      <p>Once you host your game (e.g. GitHub Pages), paste the public URL below and click <strong>Generate</strong> to produce a playable link and QR code.</p>
+      <input id="shareUrlInput" placeholder="https://your-username.github.io/your-repo" style="width:100%; padding:10px; border-radius:6px; border:2px solid #233240; background:#07121a; color:#e6eef6; margin-bottom:10px;" />
+      <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+        <button id="genShareBtn">Generate</button>
+        <button id="closeShareBtn">Close</button>
+      </div>
+      <div id="shareResult" style="margin-top:12px; text-align:center;"></div>
+    </div>
+  </div>
+
+  <!-- GAME UI -->
+  <div id="game" class="screen hidden">
+    <div id="topbar">
+      <div id="hearts" class="hearts"></div>
+      <div id="hud">
+        <div id="levelDisplay">Level 1/3</div>
+        <div id="xpDisplay">Monsters: 0/2</div>
+        <div id="buffs"></div>
+        <div id="pauseBtnWrap">
+          <button id="pauseBtn">⏸ Pause</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="world">
+      <div id="leftPanel">
+        <div id="storyline" class="storyline">Level 1: Defeat the Slimes in the Forest!</div>
+        <div id="arena" class="arena">
+          <div id="enemyCard">
+            <img id="enemyImage" class="enemy-image" src="" alt="Enemy">
+            <div id="enemyName">Green Slime</div>
+            <div id="enemyHP">HP: 30</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="rightPanel">
+        <div id="questionBox">
+          <div id="question">Solve the equation to attack!</div>
+          <input id="answerInput" autocomplete="off" placeholder="Type answer here" />
+          <div id="controls">
+            <button id="attackBtn" style="padding:14px 18px; min-width:140px;">⚔ Attack</button>
+            <div id="timer">⏳ 45</div>
+          </div>
+        </div>
+
+        <div id="workingBox" class="working-box">
+          <h4>📝 Working Steps:</h4>
+          <div id="workingSteps"></div>
+        </div>
+
+        <div id="inventoryBox">
+          <h3>🎒 Inventory</h3>
+          <div id="inventorySlots"></div>
+          <div id="inventoryHint">Click items to use them</div>
+        </div>
+
+        <div id="feedback" class="feedback"></div>
+      </div>
+    </div>
+
+    <div id="bottombar">
+      <div id="scoreDisplay">Score: 0</div>
+      <div id="saveLoad">
+        <button id="btn-save">Save</button>
+        <button id="btn-mainmenu">Main Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEVEL COMPLETE -->
+  <div id="levelComplete" class="modal hidden">
+    <div class="modal-card">
+      <h1>🎉 Level Complete!</h1>
+      <p id="levelStats"></p>
+      <div class="overlay-buttons">
+        <button id="nextLevelBtn">➡ Next Level</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GAME COMPLETE -->
+  <div id="gameComplete" class="modal hidden">
+    <div class="modal-card">
+      <h1>🏆 Quest Complete!</h1>
+      <p>You saved the Princess! Final Score: <span id="finalScore">0</span></p>
+      <div class="overlay-buttons">
+        <button id="restartGameBtn">🔄 Play Again</button>
+        <button id="mainMenuCompleteBtn">🏠 Main Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAUSE / MENU OVERLAY -->
+  <div id="overlay" class="hidden">
+    <div class="overlay-card">
+      <h2 id="overlayTitle">Paused</h2>
+      <div class="audio-controls">
+        <label>Music: <span id="musicVolume">50%</span></label>
+        <input type="range" id="musicSlider" min="0" max="100" value="50">
+        <label>SFX: <span id="sfxVolume">70%</span></label>
+        <input type="range" id="sfxSlider" min="0" max="100" value="70">
+      </div>
+      <div class="overlay-buttons">
+        <button id="resumeBtn">▶ Resume</button>
+        <button id="saveBtn">💾 Save</button>
+        <button id="toMenuBtn">🏠 Main Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GAME OVER -->
+  <div id="gameOver" class="modal hidden">
+    <div class="modal-card">
+      <h1>💀 Game Over</h1>
+      <p id="finalStats"></p>
+      <div class="overlay-buttons">
+        <button id="restartBtn">🔄 Restart</button>
+        <button id="loadBtn">💾 Load</button>
+        <button id="menuBtn">🏠 Main Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUDIO -->
+  <audio id="bgMusic" loop>
+    <source src="https://files.catbox.moe/2x8qg2.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="sfxHit">
+    <source src="https://assets.mixkit.co/active/sounds/preview/mixkit-game-ball-tap-2073.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="sfxMiss">
+    <source src="https://assets.mixkit.co/active/sounds/preview/mixkit-game-show-wrong-answer-2062.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="sfxLevel">
+    <source src="https://assets.mixkit.co/active/sounds/preview/mixkit-winning-chimes-2015.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="sfxType">
+    <source src="https://assets.mixkit.co/active/sounds/preview/mixkit-select-click-1109.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="sfxGameOver">
+    <source src="https://assets.mixkit.co/active/sounds/preview/mixkit-funny-fail-low-tone-2876.mp3" type="audio/mpeg">
+  </audio>
+
+  <button id="musicToggle" class="music-toggle">🔊 Music</button>
+
+  <script src="script.js"></script>
+</body>
+</html>
